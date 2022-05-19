@@ -64,7 +64,9 @@ function displayRoles() {
     
 }
 function displayEmployees() {
-    const sql = `SELECT * FROM employee`
+    const sql = `SELECT employee.*, role.title
+                FROM employee
+                LEFT JOIN role ON employee.role_id = role.id;`
     db.query(sql, (err, row) => {
         if(err) {
             console.log(err)
@@ -109,7 +111,9 @@ function addRole() {
             return
         }
         console.log(row)
-        question()
+        const index = row.findIndex(x => x.name === 'Sales')
+        console.log(index)
+        question(row)
     })
 }
 function addEmployee() {
@@ -125,13 +129,26 @@ function addEmployee() {
             message: 'Please enter the last name of the employee you would like to add'
         },
         {
-            type: 'choices',
+            type: 'input',
             name: "employeeRole",
             message: "Please select the role of the employee you are adding",
-            choices: ['Monger', 'yaya']
+            
         }
     ])
     .then(employee => {
+        let role;
+        if(employee.employeeRole === "Accountant") {
+            role = 1
+        }
+        else if(employee.employeeRole === "Social Media Team") {
+            role = 2
+        }
+        else if(employee.employeeRole === "Factory Worker") {
+            role = 3
+        }
+        else if(employee.employeeRole === "Graphic Designer") {
+            role = 4
+        }
         const sql = `INSERT INTO employee (first_name, last_name, role_id) 
         VALUES(?, ?, ?)`;
         const params = [employee.employeeFirstName, employee.employeeLastName, employee.employeeRole]
@@ -148,12 +165,14 @@ function addEmployee() {
 }
 
 function question(yaya) {
+  
+    
     inquirer.prompt([
         {
             type: 'input',
             name: 'roleDepartment',
             message: 'Which department does this role belong to?',
-            
+            choices: [1, 2, 3]
         },
         {
             type: 'input',
@@ -169,7 +188,7 @@ function question(yaya) {
     ])
     .then(role => {
         const sql = `INSERT INTO role (title, salary, department_id) 
-        VALUES(?, ?, ?)`;
+        VALUES(?, ?, ?) `;
         const params = [role.roleTitle, role.roleSalary, role.roleDepartment]
 
         db.query(sql, params, (err, row) => {
