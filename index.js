@@ -38,7 +38,7 @@ function initializeApp() {
 }
 
 function displayDepartment() {
-    const sql = `SELECT * FROM departments`
+    const sql = `SELECT id, name FROM departments`
     db.query(sql, (err, row) => {
         if(err) {
             console.log(err)
@@ -102,31 +102,14 @@ function addDepartment() {
     })
 }
 function addRole() {
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'roleTitle',
-            message: 'Please enter the title of the role you would like to add'
-        },
-        {
-            type: 'input',
-            name: 'roleSalary',
-            message: 'Please enter the salary of the role you would like to add'
-        }
-    ])
-    .then(role => {
-        const sql = `INSERT INTO role (title, salary) 
-        VALUES(?, ?)`;
-        const params = [role.roleTitle, role.roleSalary]
-
-        db.query(sql, params, (err, row) => {
-            if(err) {
+    const sql = `SELECT name FROM departments`
+    db.query(sql, (err, row) => {
+        if(err) {
             console.log(err)
             return
         }
-        displayRoles()
-        console.log('Success! Role added.')
-        })
+        console.log(row)
+        question()
     })
 }
 function addEmployee() {
@@ -140,12 +123,18 @@ function addEmployee() {
             type: 'input',
             name: 'employeeLastName',
             message: 'Please enter the last name of the employee you would like to add'
+        },
+        {
+            type: 'choices',
+            name: "employeeRole",
+            message: "Please select the role of the employee you are adding",
+            choices: ['Monger', 'yaya']
         }
     ])
     .then(employee => {
-        const sql = `INSERT INTO employee (first_name, last_name) 
-        VALUES(?, ?)`;
-        const params = [employee.employeeFirstName, employee.employeeLastName]
+        const sql = `INSERT INTO employee (first_name, last_name, role_id) 
+        VALUES(?, ?, ?)`;
+        const params = [employee.employeeFirstName, employee.employeeLastName, employee.employeeRole]
 
         db.query(sql, params, (err, row) => {
             if(err) {
@@ -158,6 +147,41 @@ function addEmployee() {
     })
 }
 
+function question(yaya) {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'roleDepartment',
+            message: 'Which department does this role belong to?',
+            
+        },
+        {
+            type: 'input',
+            name: 'roleTitle',
+            message: 'Please enter the name of the role you would like to add'
+        },
+        {
+            type: 'input',
+            name: 'roleSalary',
+            message: 'Please enter the salary of the role you would like to add'
+        },
+       
+    ])
+    .then(role => {
+        const sql = `INSERT INTO role (title, salary, department_id) 
+        VALUES(?, ?, ?)`;
+        const params = [role.roleTitle, role.roleSalary, role.roleDepartment]
+
+        db.query(sql, params, (err, row) => {
+            if(err) {
+            console.log(err)
+            return
+        }
+        displayRoles()
+        console.log('Success! Role added.')
+        })
+    })
+}
 initializeApp()
 
 // askInfo()
