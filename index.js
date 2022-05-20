@@ -30,6 +30,9 @@ function initializeApp() {
         else if(data.choice === 'Add an employee') {
             addEmployee()
         }
+        else if(data.choice === 'Update an employee') {
+            grabEmployees()
+        }
        
         else{
         console.log(data)
@@ -201,6 +204,52 @@ function question(yaya) {
         })
     })
 }
+
+function grabEmployees() {
+      // Ask them which employee they want to update
+      const pullData = `SELECT first_name FROM employee`
+      db.query(pullData, (err, row) => {
+          if(err) {
+              console.log(err)
+          }
+        //   Grabs the first names of all employees
+        const isolatedNames = row.map(x => x.first_name)
+        updateEmployee(isolatedNames)
+      })
+}
+function updateEmployee(employees) {
+  
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employeeUpdatedName',
+            message: 'Please select the employee you want updated',
+            choices: [employees[0], employees[1], employees[4]]
+        },
+        {
+            type: 'list',
+            name: 'employeeUpdatedRole',
+            message: 'Please select the updated role of the employee',
+            choices: [1, 2, 3]
+        }
+    ])
+    .then(data => {
+        console.log(data)
+        const sql = `UPDATE employee SET role_id = ? WHERE first_name = ?`;
+        const params = [data.employeeUpdatedRole, data.employeeUpdatedName]
+
+        db.query(sql, params, (err, result) => {
+            if(err) {
+                console.log(err)
+                return
+            }
+            console.log(result)
+            displayEmployees()
+        })
+    })
+    
+}
+
 initializeApp()
 
 // askInfo()
