@@ -28,5 +28,6 @@ CREATE TABLE employee(
     CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE
     SET
         NULL,
+        -- TODO: How do I tie in the manager name?
         CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES role(id)
 );
