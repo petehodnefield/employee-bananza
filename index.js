@@ -123,7 +123,6 @@ function addEmployee() {
             name: 'employeeLastName',
             message: 'Please enter the last name of the employee you would like to add'
         },
-        // TODO: how do I convert the roleChoices() into a numerical value?
         {
             type: 'list',
             name: "employeeRole",
@@ -180,7 +179,6 @@ function addRole() {
             name: 'roleSalary',
             message: 'Please enter the salary of the role you would like to add'
         },
-        // TODO: How do i convert department choices into a numerical value?
         {
             type: 'list',
             name: 'roleDepartment',
